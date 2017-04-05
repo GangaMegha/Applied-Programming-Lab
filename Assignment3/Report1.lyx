@@ -1,0 +1,2134 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1.25cm
+\topmargin 1.25cm
+\rightmargin 1.25cm
+\bottommargin 1.25cm
+\headheight 1.25cm
+\headsep 1.25cm
+\footskip 1.25cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Week 3: Fourier Approximations
+\end_layout
+
+\begin_layout Author
+Ganga Meghanath
+\begin_inset Newline newline
+\end_inset
+
+EE15B025
+\begin_inset Newline newline
+\end_inset
+
+Electrical Engineering
+\end_layout
+
+\begin_layout Section*
+Introduction
+\end_layout
+
+\begin_layout Standard
+This report features the analysis of coefficients of the Fourier series
+ expansion of 
+\begin_inset Formula $e{}^{x}$
+\end_inset
+
+ and cos(cos(x)) over the interval [0,2𝜋).
+ Two different approaches have been followed to compute the coefficients
+ - Integration and Least Squares.
+ For each of the above mentioned methods, graphs in semilog and log scales
+ are plotted against frequency to get more insights into the two approaches
+ and analyse the deviation in the Least Square approach in comparison to
+ Direct Integration.
+ The absolute difference between the two sets of coefficients obtained would
+ serve as a means to quantify the deviation and also to measure the maximum
+ deviation.
+\end_layout
+
+\begin_layout Standard
+The Fourier series is given by :
+\begin_inset Formula 
+\[
+a_{0}+{\displaystyle \sum_{n=1}^{\text{∞}}\{a_{n}cos(nx)}+b_{n}sin(nx)\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For simplicity of computation, we will not compute the coefficients till
+ infinity , but till 25, as our main purpose is to compare the two methods
+ mentioned above.
+ Hence,
+\begin_inset Formula 
+\[
+f(x)=a_{0}+{\displaystyle \sum_{n=1}^{25}\{a_{n}cos(nx)}+b_{n}sin(nx)\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Integration method, the coefficients 
+\begin_inset Formula $a_{n}$
+\end_inset
+
+and 
+\begin_inset Formula $b_{n}$
+\end_inset
+
+are given by :
+\begin_inset Formula 
+\[
+a_{0}=\frac{1}{2\text{𝜋}}\intop_{0}^{2\text{𝜋}}f(x)dx
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+a_{n}=\frac{1}{\text{𝜋}}\intop_{0}^{2\text{𝜋}} & f(x)cos(nx)dx
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+b_{n}=\frac{1}{\text{\ensuremath{\pi}}}\intop_{0}^{2\text{\ensuremath{\pi}}}f(x)sin(nx)dx
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Least square method , it turns into a matrix problem :
+\end_layout
+
+\begin_layout Standard
+Defining a vector x going from 0 to 2𝜋 in 400 steps and evaluating the function
+ f ( x ) at those x values.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $\begin{pmatrix}1 & cosx_{1} & sinx_{1} & ... & cos25x_{1} & sin25x_{1}\\
+1 & cosx_{2} & sinx_{2} & ... & cos25x_{2} & sin25x_{2}\\
+... & ... & ... & ... & ... & ...\\
+1 & cosx_{400} & sinx_{400} & ... & cos25x_{400} & sin25x_{400}
+\end{pmatrix}$
+\end_inset
+
+
+\begin_inset Formula $\begin{pmatrix}a_{0}\\
+a_{1}\\
+b_{1}\\
+...\\
+a_{25}\\
+b_{25}
+\end{pmatrix}$
+\end_inset
+
+=
+\begin_inset Formula $\begin{pmatrix}f(x_{1})\\
+f(x_{2})\\
+...\\
+f(x_{400})
+\end{pmatrix}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Hence, we will solve Ac=b where c contains the fourier coefficients.
+\end_layout
+
+\begin_layout Standard
+Python and associated libraries have been used for computing the coefficients
+ and for plotting the graphs.
+ Python provides an efficient and easy way for the computations by providing
+ libraries having in-build functions for integration and least squares.
+ This makes our task much simple as seperate codes for the implementation
+ needn't be written.
+ Python also provides matplotlib for plotting functions and even includes
+ latex for displaying mathematical formulae and expressions.
+ 
+\end_layout
+
+\begin_layout Subsection*
+1.
+ Define Python functions for 
+\begin_inset Formula $e^{x}$
+\end_inset
+
+and cos(cosx), that take a vector (or scalar) input, and return a vector
+ (or scalar) value.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+def f1(x):
+\end_layout
+
+\begin_layout LyX-Code
+
+	return exp(x)
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+def f2(x):
+\end_layout
+
+\begin_layout LyX-Code
+
+	return cos(cos(x))
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+x = raw_input("Enter the vector x for Q1 : ") #accept vector x
+\end_layout
+
+\begin_layout LyX-Code
+
+x=re.sub('[^0-9 ]+', ' ',x)#accept digits & spaces from string
+\end_layout
+
+\begin_layout LyX-Code
+
+x=x.split()				#split the string 
+\end_layout
+
+\begin_layout LyX-Code
+
+x=[float(a) for a in x]	#convert each element of list to float
+\end_layout
+
+\begin_layout LyX-Code
+
+x=np.array(x)			 #making it an array
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+y1=f1(x)			#finding exp(x)
+\end_layout
+
+\begin_layout LyX-Code
+
+y2=f2(x)			#finding cos(cosx)
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+#printing out exp(x) and cos(cosx)
+\end_layout
+
+\begin_layout LyX-Code
+
+print("
+\backslash
+nexp(x)given as : {}".format(y1))
+\end_layout
+
+\begin_layout LyX-Code
+
+print("
+\backslash
+n
+\backslash
+ncos(cos(x))given as : {}".format(y2))
+\end_layout
+
+\begin_layout LyX-Code
+
+print "
+\backslash
+n
+\backslash
+nwhere x is taken in radians
+\backslash
+n
+\backslash
+n"
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The output comes out as :
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+Enter the vector x for Q1 : 1,,,2...3   4//5
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+exp(x)given as:[2.71828183 7.3890561 20.08553692 54.59815003 148.4131591] 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+cos(cos(x))given as:[0.85755322 0.91465333 0.54869613 0.79387345 0.96003693]
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+where x is taken in radians
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+2.
+ Obtain the first 51 coefficients for the two functions above using integration.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+def f1_sin(n):
+\end_layout
+
+\begin_layout LyX-Code
+
+	ans= lambda x,a : exp(x)*sin(n*x)
+\end_layout
+
+\begin_layout LyX-Code
+
+	return ans
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+def f1_cos(n):
+\end_layout
+
+\begin_layout LyX-Code
+
+	ans= lambda x,a : exp(x)*cos(n*x)
+\end_layout
+
+\begin_layout LyX-Code
+
+	return ans
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+def f2_sin(n):
+\end_layout
+
+\begin_layout LyX-Code
+
+	ans= lambda x,a : cos(cos(x))*sin(n*x)
+\end_layout
+
+\begin_layout LyX-Code
+
+	return ans
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+def f2_cos(n):
+\end_layout
+
+\begin_layout LyX-Code
+
+	ans= lambda x,a : cos(cos(x))*cos(n*x)
+\end_layout
+
+\begin_layout LyX-Code
+
+	return ans
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+expx=[]	#coefficient vector for exp(x)
+\end_layout
+
+\begin_layout LyX-Code
+
+coscosx=[]#coefficient vector for cos(cosx)
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+temp=quad(f1_cos(0),0,2*pi,args=(0))
+\end_layout
+
+\begin_layout LyX-Code
+
+expx.append(temp[0]/(2*pi)) #compute a0
+\end_layout
+
+\begin_layout LyX-Code
+
+temp=quad(f2_cos(0),0,2*pi,args=(0))
+\end_layout
+
+\begin_layout LyX-Code
+
+coscosx.append(temp[0]/(2*pi)) #compute a0
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+for i in range(1,26):	#loop for computing values of the coefficients
+\end_layout
+
+\begin_layout LyX-Code
+
+	temp=quad(f1_cos(i),0,2*pi,args=(i)) #computes an for exp(x)
+\end_layout
+
+\begin_layout LyX-Code
+
+	expx.append(temp[0]/pi)
+\end_layout
+
+\begin_layout LyX-Code
+
+	temp=quad(f2_cos(i),0,2*pi,args=(i)) #computes an for cos(cosx)
+\end_layout
+
+\begin_layout LyX-Code
+
+	coscosx.append(temp[0]/pi)
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+	temp=quad(f1_sin(i),0,2*pi,args=(i)) #computes bn for exp(X)
+\end_layout
+
+\begin_layout LyX-Code
+
+	expx.append(temp[0]/pi)
+\end_layout
+
+\begin_layout LyX-Code
+
+	temp=quad(f2_sin(i),0,2*pi,args=(i))#computes bn for cos(cosx)
+\end_layout
+
+\begin_layout LyX-Code
+
+	coscosx.append(temp[0]/pi)
+\end_layout
+
+\begin_layout LyX-Code
+
+	
+\end_layout
+
+\begin_layout LyX-Code
+
+with open('Output.txt','a') as file_obj:
+\end_layout
+
+\begin_layout LyX-Code
+
+	file_obj.write("
+\backslash
+nThe 51 coefficients for exp(x): {}".format(expx))	
+\end_layout
+
+\begin_layout LyX-Code
+
+	file_obj.write("
+\backslash
+n
+\backslash
+nThe 51 coefficients for cos(cos(x)): {}".format(coscosx))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+3.
+ For each of the two functions, make two different plots using “semilogy”
+ and “loglog” and plot the magnitude of the coefficients vs n .
+ The values should be plotted with red circles.
+ Note that the answer should be a vector of the form :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $\begin{pmatrix}a_{0}\\
+a_{1}\\
+b_{2}\\
+...\\
+a_{25}\\
+b_{25}
+\end{pmatrix}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename 3a.png
+	lyxscale 70
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename 3b.png
+	lyxscale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename 3c.png
+	lyxscale 70
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename 3d.png
+	lyxscale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+4.
+ In integration method, the 
+\begin_inset Formula $b_{n}$
+\end_inset
+
+ coefficients for 
+\begin_inset Formula $cos(cosx)$
+\end_inset
+
+ is nearly zero.
+ Why does this happen?
+\end_layout
+
+\begin_layout Standard
+Tailor expansion of 
+\begin_inset Formula $cosx=1-\frac{x^{2}}{2!}+\frac{x^{4}}{4!}-\frac{x^{6}}{6!}+\frac{x^{8}}{8!}-$
+\end_inset
+
+....
+\end_layout
+
+\begin_layout Standard
+Hence, cos(cosx)=
+\begin_inset Formula $1-\frac{(cosx)^{2}}{2!}+\frac{(cosx)^{4}}{4!}-\frac{(cosx)^{6}}{6!}+\frac{(cosx)^{8}}{8!}-$
+\end_inset
+
+...
+\end_layout
+
+\begin_layout Standard
+We know that cos(2x)=1-2
+\begin_inset Formula $cos^{2}x$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Hence, each of the terms in the tailor expansion can be replaced by cosine
+ functions of frequencies which are multiples of x.
+ This can be made to look like a fourier series entirely in cosine function.
+ Hence, cos(cosx) can be expressed as a sum of cosines.
+ 
+\end_layout
+
+\begin_layout Standard
+cos(cosx) is an even and positive(ranges from nearly 0.54 to 1) function.
+\end_layout
+
+\begin_layout Standard
+According to theorem, if f(x) is a function defined and integrable on interval
+ [
+\begin_inset Formula $-\text{𝜋,𝜋]}$
+\end_inset
+
+ and even, then
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $b_{n}=0,$
+\end_inset
+
+ pour tout n
+\begin_inset Formula $\geq1;$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and 
+\begin_inset Formula 
+\[
+a_{n}=\frac{2}{\text{𝜋}}\intop_{0}^{\text{𝜋}}f(x)cos(nx)dx
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The fourier series is then called the Fourier Cosine series and is given
+ by,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f(x)\text{∼\ensuremath{a_{0}+}\ensuremath{\sum_{n=1}^{∞}a_{n}cos(nx)}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+if f(x) is odd, then
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $a_{n}=0,$
+\end_inset
+
+ pour tout n
+\begin_inset Formula $\geq0$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and
+\begin_inset Formula 
+\[
+b_{n}=\frac{2}{\text{𝜋}}\intop_{0}^{\text{𝜋}}f(x)sin(nx)dx
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The fourier series is then called the Fourier Sine series and is given by,
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $f(x)\text{∼}\sum_{n=1}^{\text{∞}}a_{n}sin(nx)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+5.
+ In the 
+\begin_inset Formula $e^{x}$
+\end_inset
+
+ case in integration method, the coefficients do not decay quickly in the
+ semilogy plot.
+ Why not? Why does the plot look linear in the loglog plot?
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $e^{x}$
+\end_inset
+
+is not a periodic function.
+ We have defined an interval for it and repeated it for infinite times to
+ make a periodic function of its value in the interval [0,2
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+𝜋) , having time period 2𝜋.
+ Fourier series is defined for a periodic signal.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $e^{x}$
+\end_inset
+
+fourier series in the given interval is as follows :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $e^{x}=\frac{e^{2𝜋}-1}{𝜋}(\frac{1}{2}+\sum_{n=1}^{∞}\frac{cos(nx)-nsin(nx)}{n^{2}-1})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here,
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $a_{n}$
+\end_inset
+
+ 𝛼 
+\begin_inset Formula $\frac{1}{n^{2}-1}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+and
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $b_{n}$
+\end_inset
+
+ 𝛼 
+\begin_inset Formula $\frac{n}{n^{2}-1}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This clearly explains why the loglog plot is linear.
+ The y 𝛼 
+\begin_inset Formula $\frac{1}{x}$
+\end_inset
+
+and 
+\begin_inset Formula $\frac{1}{x^{2}}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+This also explains why the coefficients don't decay quickly in the semilogy
+ plot since y-axis has 
+\begin_inset Formula $\frac{1}{n^{2}}$
+\end_inset
+
+and 
+\begin_inset Formula $\frac{1}{n}$
+\end_inset
+
+relations.
+ Hence the decay will be gradual when Y-axis is plotted in log scale.
+\end_layout
+
+\begin_layout Subsection*
+6.
+ Why are the 
+\begin_inset Formula $b_{n}$
+\end_inset
+
+ coefficients larger than the 
+\begin_inset Formula $a_{n}$
+\end_inset
+
+ coefficients for 
+\begin_inset Formula $e^{x}$
+\end_inset
+
+case in integration method?
+\end_layout
+
+\begin_layout Standard
+This is because, the fourier series is as follows :
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $e^{x}=\frac{e^{2𝜋}-1}{𝜋}(\frac{1}{2}+\sum_{n=1}^{∞}\frac{cos(nx)-nsin(nx)}{n^{2}-1})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Hence, 
+\begin_inset Formula $a_{n}=abs\left[\frac{e^{2\text{𝜋}}-1}{\text{𝜋}(n^{2}-1)}\right]<abs\left[-\frac{(e^{2\text{\ensuremath{\pi}}}-1)n}{\text{\ensuremath{\pi}\ensuremath{(\ensuremath{n^{2}}-1)}}}\right]=b_{n}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+7.
+ For Least square method, build up x,b and A and use lstsq() to solve the
+ problem.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+x = linspace(0,2*pi,num=401)#creating x for least square approx
+\end_layout
+
+\begin_layout Plain Layout
+
+x=x[:-1] # drop last term to have proper periodic integral
+\end_layout
+
+\begin_layout Plain Layout
+
+b1=f1(x) # f1->exp() has been written to take a vector
+\end_layout
+
+\begin_layout Plain Layout
+
+b2=f2(x) # f2->cos(cosx) has been written to take a vector
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+with open('Output.txt','a') as file_obj:
+\end_layout
+
+\begin_layout Plain Layout
+
+	file_obj.write(("
+\backslash
+nexp(x) given as : {}".format(b1,b2)))
+\end_layout
+
+\begin_layout Plain Layout
+
+	file_obj.write("
+\backslash
+n
+\backslash
+ncos(cos(x)) is given as : {}".format(b2))
+\end_layout
+
+\begin_layout Plain Layout
+
+	file_obj.write("
+\backslash
+n
+\backslash
+nwhere x is taken in radians
+\backslash
+n
+\backslash
+n")
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+A1=np.zeros((400,51))	 # allocate space for A1->exp(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+A2=np.zeros((400,51))	 # allocate space for A2->cos(cosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+A1[:,0]=1 	 # col 1 is all one
+\end_layout
+
+\begin_layout Plain Layout
+
+A2[:,0]=1 	 # col 1 is all one
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+for k in range(1,26):
+\end_layout
+
+\begin_layout Plain Layout
+
+	A1[:,2*k-1]=cos(k*x)	# cos(kx) column
+\end_layout
+
+\begin_layout Plain Layout
+
+	A2[:,2*k-1]=cos(k*x)	# sin(kx) column
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	A1[:,2*k]=sin(k*x)		# cos(kx) column
+\end_layout
+
+\begin_layout Plain Layout
+
+	A2[:,2*k]=sin(k*x)		# sin(kx) column
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+c11=lstsq(A1,b1)[0]
+\end_layout
+
+\begin_layout Plain Layout
+
+c12=lstsq(A2,b2)[0]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+8.
+ Plot the coefficients obtained using lstsq() with green circles in the
+ corresponding plots.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename 8a.png
+	lyxscale 70
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename 8b.png
+	lyxscale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename 8c.png
+	lyxscale 70
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename 8d.png
+	lyxscale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+9.
+ Compare the answers got by least squares and by the direct integration.
+ Do they agree? Should they? How much deviation is there (find the absolute
+ difference between the two sets of coefficients and find the largest deviation.
+ How will you do this using vectors?)
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+error_exp=abs(c11-expx)		#deviation for exp(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+error_cos=abs(c12-coscosx)	#deviation for cos(cosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename 9a.png
+	lyxscale 70
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename 9b.png
+	lyxscale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As we can see from the graphs, the deviation is quite small.
+ For exp(x) , the maximum deviation is about 1.33 and for cos(cosx), the
+ maximum deviation is of the order of 
+\begin_inset Formula $10^{-15}$
+\end_inset
+
+.
+ This would tell us that the approximation for the fourier coefficients
+ of cos(cosx) is quite close to the real value.
+ Hence it can be used for further computations effectively.
+ As in the case of 
+\begin_inset Formula $e^{x},$
+\end_inset
+
+the values obtained are decent enough, but the error value obtained is accountab
+le.
+ Hence, integration method would be more preferred for 
+\begin_inset Formula $e^{x}$
+\end_inset
+
+ though least square method is a fair enough approximation.
+\end_layout
+
+\begin_layout Subsection*
+The whole code :
+\end_layout
+
+\begin_layout Standard
+Note : Some parts of the code might not be visile in the pdf, though the
+ entire code is available in the .lyx file
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+from pylab import *
+\end_layout
+
+\begin_layout Plain Layout
+
+import re
+\end_layout
+
+\begin_layout Plain Layout
+
+import numpy as np
+\end_layout
+
+\begin_layout Plain Layout
+
+from scipy.integrate import quad
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def f1(x):
+\end_layout
+
+\begin_layout Plain Layout
+
+	return exp(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def f2(x):
+\end_layout
+
+\begin_layout Plain Layout
+
+	return cos(cos(x))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def f1_sin(n):
+\end_layout
+
+\begin_layout Plain Layout
+
+	ans= lambda x,a : exp(x)*sin(n*x)
+\end_layout
+
+\begin_layout Plain Layout
+
+	return ans
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def f1_cos(n):
+\end_layout
+
+\begin_layout Plain Layout
+
+	ans= lambda x,a : exp(x)*cos(n*x)
+\end_layout
+
+\begin_layout Plain Layout
+
+	return ans
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def f2_sin(n):
+\end_layout
+
+\begin_layout Plain Layout
+
+	ans= lambda x,a : cos(cos(x))*sin(n*x)
+\end_layout
+
+\begin_layout Plain Layout
+
+	return ans
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def f2_cos(n):
+\end_layout
+
+\begin_layout Plain Layout
+
+	ans= lambda x,a : cos(cos(x))*cos(n*x)
+\end_layout
+
+\begin_layout Plain Layout
+
+	return ans
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################# Question 1 ###################
+#######################################
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+x = raw_input("Enter the vector x for Q1 : ")	#accept a vector x from the
+ user in any form
+\end_layout
+
+\begin_layout Plain Layout
+
+x=re.sub('[^0-9 ]+', ' ',x)						#remove all characters except for digits
+ and spaces from the string
+\end_layout
+
+\begin_layout Plain Layout
+
+x=x.split()										#split the string 
+\end_layout
+
+\begin_layout Plain Layout
+
+x=[float(a) for a in x]							#convert each element of list to float
+\end_layout
+
+\begin_layout Plain Layout
+
+x=np.array(x)									#making it an array
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+y1=f1(x)			#finding exp(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+y2=f2(x)			#finding cos(cosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#printing out exp(x) and cos(cosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+print("
+\backslash
+nexp(x) given as : {} 
+\backslash
+n
+\backslash
+ncos(cos(x)) is given as : {}
+\backslash
+n
+\backslash
+nwhere x is taken in radians
+\backslash
+n
+\backslash
+n".format(y1,y2))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################# Question 2 ###################
+########################################
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+expx=[]	#coefficient vector for exp(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+coscosx=[]#coefficient vector for cos(cosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+temp=quad(f1_cos(0),0,2*pi,args=(0))
+\end_layout
+
+\begin_layout Plain Layout
+
+expx.append(temp[0]/(2*pi)) #compute a0
+\end_layout
+
+\begin_layout Plain Layout
+
+temp=quad(f2_cos(0),0,2*pi,args=(0))
+\end_layout
+
+\begin_layout Plain Layout
+
+coscosx.append(temp[0]/(2*pi)) #compute a0
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+for i in range(1,26):	#loop for computing values of the coefficients
+\end_layout
+
+\begin_layout Plain Layout
+
+	temp=quad(f1_cos(i),0,2*pi,args=(i)) #computes a0 for exp(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+	expx.append(temp[0]/pi)
+\end_layout
+
+\begin_layout Plain Layout
+
+	temp=quad(f2_cos(i),0,2*pi,args=(i)) #computes a0 for cos(cosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+	coscosx.append(temp[0]/pi)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	temp=quad(f1_sin(i),0,2*pi,args=(i)) #computes b0 for exp(X)
+\end_layout
+
+\begin_layout Plain Layout
+
+	expx.append(temp[0]/pi)
+\end_layout
+
+\begin_layout Plain Layout
+
+	temp=quad(f2_sin(i),0,2*pi,args=(i))#computes b0 for cos(cosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+	coscosx.append(temp[0]/pi)
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+with open('Output.txt','a') as file_obj:
+\end_layout
+
+\begin_layout Plain Layout
+
+	file_obj.write("
+\backslash
+nThe 51 coefficients for exp(x): {}".format(expx))	
+\end_layout
+
+\begin_layout Plain Layout
+
+	file_obj.write("
+\backslash
+n
+\backslash
+nThe 51 coefficients for cos(cos(x)): {}".format(coscosx))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################ Question 3 ####################
+######################################
+\end_layout
+
+\begin_layout Plain Layout
+
+expx=np.array(expx)
+\end_layout
+
+\begin_layout Plain Layout
+
+coscosx=np.array(coscosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+temp=linspace(1,25,num=25,endpoint=True)#defining a list ranging from 1
+ o 25
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+n=np.zeros(51)	#n denotes x axis ->different frequencies
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+n[1::2]=temp #n will have one 0 and then doublets of the 
+\end_layout
+
+\begin_layout Plain Layout
+
+n[2::2]=temp #rest of the numbers till 25
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line1, = semilogy(n,abs(expx),'ro',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Coefficients')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("3a) semilog for exp(x)")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("3a.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line2, = loglog(n,abs(expx),'ro',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Coefficients')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("3b) loglog for exp(x)")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("3b.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line3, = semilogy(n,abs(coscosx),'ro',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Coefficients')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("3c) semilog for cos(cos(x))")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("3c.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line4, = loglog(n,abs(coscosx),'ro',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Coefficients')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("3d) loglog for cos(cos(x))")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("3d.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+############################################### Question 3 #####################
+##########################
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+x = linspace(0,2*pi,num=401)	#creating x for least square approximation
+\end_layout
+
+\begin_layout Plain Layout
+
+x=x[:-1]		 # drop last term to have a proper periodic integral
+\end_layout
+
+\begin_layout Plain Layout
+
+b1=f1(x)		 # f1->exp() has been written to take a vector
+\end_layout
+
+\begin_layout Plain Layout
+
+b2=f2(x)		 # f2->cos(cosx) has been written to take a vector
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+with open('Output.txt','a') as file_obj:
+\end_layout
+
+\begin_layout Plain Layout
+
+	file_obj.write(("
+\backslash
+nexp(x) given as : {} 
+\backslash
+n
+\backslash
+ncos(cos(x)) is given as : {}
+\backslash
+n
+\backslash
+nwhere x is taken in radians
+\backslash
+n
+\backslash
+n".format(b1,b2)))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+A1=np.zeros((400,51))	 # allocate space for A1->exp(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+A2=np.zeros((400,51))	 # allocate space for A2->cos(cosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+A1[:,0]=1 	 # col 1 is all one
+\end_layout
+
+\begin_layout Plain Layout
+
+A2[:,0]=1 	 # col 1 is all one
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+for k in range(1,26):
+\end_layout
+
+\begin_layout Plain Layout
+
+	A1[:,2*k-1]=cos(k*x)	# cos(kx) column
+\end_layout
+
+\begin_layout Plain Layout
+
+	A2[:,2*k-1]=cos(k*x)	# sin(kx) column
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	A1[:,2*k]=sin(k*x)		# cos(kx) column
+\end_layout
+
+\begin_layout Plain Layout
+
+	A2[:,2*k]=sin(k*x)		# sin(kx) column
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+c11=lstsq(A1,b1)[0]
+\end_layout
+
+\begin_layout Plain Layout
+
+c12=lstsq(A2,b2)[0]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line5, = semilogy(list(range(0,51)),abs(c11),'go',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Coefficients')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("8a) semilogy for exp(x)")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("8a.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line6, = semilogy(list(range(0,51)),abs(c12),'go',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Coefficients')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("8b) semilogy for cos(cos(x))")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("8b.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line7, = loglog(list(range(0,51)),abs(c11),'go',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Coefficients')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("8c) loglog for exp(x)")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("8c.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line8, = loglog(list(range(0,51)),abs(c12),'go',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Coefficients')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("8d) loglog for cos(cos(x))")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("8d.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+################################### Question 6 #################################
+######
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+error_exp=abs(c11-expx)		#deviation for exp(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+error_cos=abs(c12-coscosx)	#deviation for cos(cosx)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line9, = semilogy(n,error_exp,'ro',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Error')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("9a) Error for exp(x) - Semilogy")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("9a.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+line10, = semilogy(n,error_cos,'ro',linewidth=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+xlabel('n')
+\end_layout
+
+\begin_layout Plain Layout
+
+ylabel('Error')
+\end_layout
+
+\begin_layout Plain Layout
+
+title("9b) Error for cos(cosx)- Semilogy")
+\end_layout
+
+\begin_layout Plain Layout
+
+savefig("9b.png")
+\end_layout
+
+\begin_layout Plain Layout
+
+show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+with open('Output.txt','a') as file_obj:
+\end_layout
+
+\begin_layout Plain Layout
+
+	file_obj.write("
+\backslash
+n
+\backslash
+nMaximum deviation for exp(x) is {} and cos(cosx) is {}".format(max(error_exp),ma
+x(error_cos)))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

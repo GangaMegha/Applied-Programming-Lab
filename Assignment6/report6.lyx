@@ -1,0 +1,723 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Week 6: Using Biot Savart to compute 
+\begin_inset Formula $\overrightarrow{B}$
+\end_inset
+
+ Fields
+\end_layout
+
+\begin_layout Author
+Ganga Meghanath
+\end_layout
+
+\begin_layout Date
+EE15B025
+\end_layout
+
+\begin_layout Abstract
+In this assignment, we compute the Magnetic Field due to current in a wire.
+ We break up the wire into little pieces, and for each, we use the Biot
+ Savart Law to compute 
+\begin_inset Formula $\overrightarrow{B}$
+\end_inset
+
+ at different points.
+ We sum up all the contributions to get the 
+\begin_inset Formula $\overrightarrow{B}$
+\end_inset
+
+ field due to the coil.
+\end_layout
+
+\begin_layout Subsection*
+Geometry of Problem
+\end_layout
+
+\begin_layout Standard
+A wire is bent into a square shape as shown in the figure below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Screenshot from 2017-03-06 17:52:17.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The locations are shown in cm.
+ The radius of the wire is 0.05 cm.
+ A current of 1 Amp flows through the wire.
+ The problem is to compute the magnetic field in a cube that goes from −1
+ < x, y,z < 1.
+\end_layout
+
+\begin_layout Subsubsection*
+1.
+ Define the line passing through the centre of the wire where it enters
+ at (1,−0.9) going round the square till it leaves at (0.9,−1).
+ This length is 0.9 + 1 + 1 + 0.9 + 0.5
+\begin_inset Formula $\sqrt{2}$
+\end_inset
+
+ + 0.5
+\begin_inset Formula $\sqrt{2}$
+\end_inset
+
+ cm.
+ Divide the line into pieces of length 0.1 cm.
+ The leads can have lengths slightly longer to make them integer number
+ of pieces.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+#Defining the wire
+\end_layout
+
+\begin_layout LyX-Code
+
+x1=np.arange(1,0.5,-0.1/(2**0.5))
+\end_layout
+
+\begin_layout LyX-Code
+
+y1=np.arange(-0.9,-0.4,0.1/(2**0.5))
+\end_layout
+
+\begin_layout LyX-Code
+
+y2=np.arange(-0.4+0.1,0.5,0.1)
+\end_layout
+
+\begin_layout LyX-Code
+
+x2=0.5*np.ones(len(y2))
+\end_layout
+
+\begin_layout LyX-Code
+
+x3=np.arange(0.5,-0.5,-0.1)
+\end_layout
+
+\begin_layout LyX-Code
+
+y3=0.5*np.ones(len(x3))
+\end_layout
+
+\begin_layout LyX-Code
+
+y4=np.arange(0.5,-0.5,-0.1)
+\end_layout
+
+\begin_layout LyX-Code
+
+x4=-0.5*np.ones(len(y4))
+\end_layout
+
+\begin_layout LyX-Code
+
+x5=np.arange(-0.5,0.4,0.1)
+\end_layout
+
+\begin_layout LyX-Code
+
+y5=-0.5*np.ones(len(x5))
+\end_layout
+
+\begin_layout LyX-Code
+
+x6=np.arange(0.4,0.9+0.1/(2**0.5),0.1/(2**0.5))
+\end_layout
+
+\begin_layout LyX-Code
+
+y6=np.arange(-0.5,-1-0.1/(2**0.5),-0.1/(2**0.5))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+2.
+ Create the points corresponding to the ends of the pieces into an array
+ in Python.
+ A single array should go from (1,−0.9) to (0.9,−1).
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+x=np.concatenate((x1,x2,x3,x4,x5,x6),axis=0)
+\end_layout
+
+\begin_layout LyX-Code
+
+y=np.concatenate((y1,y2,y3,y4,y5,y6),axis=0)
+\end_layout
+
+\begin_layout LyX-Code
+
+conductor=np.vstack((x,y))#(x,y) of end points
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+3.
+ Locate the centres of the individual pieces.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+mid=(conductor[:,:-1]+conductor[:,1:])/2 #midpoints
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+4.
+ Pad the centres with a zero column, representing the z coordinate.These
+ are the locations of the centres of the wire pieces.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+mid=np.vstack((mid[0,:],mid[1,:],np.zeros(len(mid[0,:]))))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+5.Create a vector of current directions (the amplitude is unity).
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+dr_x = np.diff(x)	#dx
+\end_layout
+
+\begin_layout LyX-Code
+
+dr_y = np.diff(y)	#dy
+\end_layout
+
+\begin_layout LyX-Code
+
+dr_x=np.divide(dr_x,(dr_x**2 + dr_y**2)**0.5)
+\end_layout
+
+\begin_layout LyX-Code
+
+dr_y=np.divide(dr_y,(dr_x**2 + dr_y**2)**0.5)
+\end_layout
+
+\begin_layout LyX-Code
+
+dl=np.vstack((dr_x,dr_y))	#vector dl
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+6.
+ You should plot the end locations (with crosses), the centres with red
+ dots and the current arrows in blue (use quiver, right over the plot)
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+mp.figure(1)
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.plot(x,y,'k')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.quiver(x,y,dr_x,dr_y,color='b')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.scatter(mid[0,:],mid[1,:],c='r')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.scatter(conductor[0,:],conductor[1,:],c='k',marker='x')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.axis([-1.0,1.0,-1.0,1.0])
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.savefig('Fig1.png')
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig1.png
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+7.
+ Now create an array of points in (x, y,z) that are 0.1 spaced.
+ this will be a 3 − D array for each of x, y and z, and each array will
+ have 213points.
+ To do this, create each as a 1-Dimensional vector and use meshgrid.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+c=np.arange(-1,1.1,0.1)
+\end_layout
+
+\begin_layout LyX-Code
+
+Y,X,Z=np.meshgrid(c,c,c)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+8.
+ Create arrays to hold B at these points.
+ (Dimension will be 21×21×21×3)
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+B=np.zeros((21,21,21,3))
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+9.
+ Now implement the Biot Savart Law at each point (
+\begin_inset Formula $x_{i}$
+\end_inset
+
+ , 
+\begin_inset Formula $y_{j}$
+\end_inset
+
+ ,
+\begin_inset Formula $z_{k}$
+\end_inset
+
+), due to the 
+\begin_inset Formula $m^{th}$
+\end_inset
+
+ wire element.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+for i in range(len(dr_x)) :
+\end_layout
+
+\begin_layout LyX-Code
+
+	Rx=X-mid[0][i]
+\end_layout
+
+\begin_layout LyX-Code
+
+	Ry=Y-mid[1][i]
+\end_layout
+
+\begin_layout LyX-Code
+
+	Rz=Z-mid[2][i]
+\end_layout
+
+\begin_layout LyX-Code
+
+	R=(Rx**2 + Ry**2 +Rz**2)**1.5
+\end_layout
+
+\begin_layout LyX-Code
+
+	B[:,:,:,0]+=dr_y[i]*Rz/(R)
+\end_layout
+
+\begin_layout LyX-Code
+
+	B[:,:,:,1]+=(-dr_x[i]*Rz)/(R)
+\end_layout
+
+\begin_layout LyX-Code
+
+	B[:,:,:,2]+=(dr_x[i]*Ry - dr_y[i]*Rx)/(R)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+10.
+ Do an arrow plot of the field in the x − z plane, and in vertical planes
+ corresponding to y = −0.3, y = −0.5 and y = −0.7.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout LyX-Code
+
+mp.figure(2)
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.quiver(np.arange(-1,1.1,0.1),np.arange(-1,1.1,0.1),B[:,10,:,0].T,B[:,10,:,2].T,scale=2
+000)
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.title(r'Arrow plot of $
+\backslash
+vec{B}$ along x-z plane')	
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.xlabel('x')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.ylabel('z')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.savefig('Fig2.png')
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.figure(3)
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.quiver(np.arange(-1,1.1,0.1),np.arange(-1,1.1,0.1),B[:,7,:,0].T,B[:,7,:,2].T,scale=200
+0)
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.title(r'Arrow plot of $
+\backslash
+vec{B}$ along y=-0.3')	
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.xlabel('x')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.ylabel('z')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.savefig('Fig3.png')
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.figure(4)
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.quiver(np.arange(-1,1.1,0.1),np.arange(-1,1.1,0.1),B[:,5,:,0].T,B[:,5,:,2].T,scale=120
+0)
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.title(r'Arrow plot of $
+\backslash
+vec{B}$ along y=-0.5')	
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.xlabel('x')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.ylabel('z')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.savefig('Fig4.png')
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.figure(5)
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.quiver(np.arange(-1,1.1,0.1),np.arange(-1,1.1,0.1),B[:,3,:,0].T,B[:,3,:,2].T,scale=100
+0)
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.title(r'Arrow plot of $
+\backslash
+vec{B}$ along y=-0.7')	
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.xlabel('x')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.ylabel('z')
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.savefig('Fig5.png')
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+
+mp.show()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig2.png
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig3.png
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig4.png
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig5.png
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

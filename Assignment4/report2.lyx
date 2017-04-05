@@ -1,0 +1,657 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Week 4 : Fitting Data to Models
+\end_layout
+
+\begin_layout Author
+Ganga Meghanath
+\begin_inset Newline newline
+\end_inset
+
+EE15B025
+\end_layout
+
+\begin_layout Abstract
+1.Fitting of data using Models
+\end_layout
+
+\begin_layout Abstract
+2.Study the effect of noise on the fitting process
+\end_layout
+
+\begin_layout Description
+Introduction :
+\end_layout
+
+\begin_layout Standard
+Bessel functions are very often seen in cylindrical geometry.
+ They come in several forms, and we will look at the Bessel function of
+ the first type, 
+\begin_inset Formula $J_{v}$
+\end_inset
+
+( x ).
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename Screenshot from 2017-02-06 19:59:11.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For large x,
+\end_layout
+
+\begin_layout Subsubsection*
+\begin_inset Formula 
+\[
+J_{v}(x)=\sqrt{\frac{2}{\pi x}}cos(x-\frac{v\pi}{2}-\frac{\pi}{4})
+\]
+
+\end_inset
+
+ 1.
+ Generate a vector of 41 values from 0 to 20 and obtain a vector of 
+\begin_inset Formula $J_{1}$
+\end_inset
+
+( x ) values.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+def Jv(x) :	#function computes model (b)
+\end_layout
+
+\begin_layout Plain Layout
+
+	return(((2/(m.pi*x))**(1/2.0))*sp.cos(x-3*m.pi/4))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+x=np.linspace(0,20,num=42)
+\end_layout
+
+\begin_layout Plain Layout
+
+x=x[1:]
+\end_layout
+
+\begin_layout Plain Layout
+
+print Jv(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+2.
+ For different 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+ = 0.5,1,....,18 extract the subvectors of x and 
+\begin_inset Formula $J_{1}$
+\end_inset
+
+( x ) that correspond to x
+\begin_inset Formula $\geq x_{0}$
+\end_inset
+
+.
+ For each 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+ , construct the matrix corresponding to
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Acos(x_{i})+Bsin(x_{i})\text{≈}J_{1}(x_{i})
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+A\frac{cos(x_{i})}{\sqrt{x_{i}}}+B\frac{sin(x_{i})}{\sqrt{x_{i}}}\text{≈}J_{1}(x_{i})
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Obtain the best fit (A,B) .
+ Obtain the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+phi$
+\end_layout
+
+\end_inset
+
+ corresponding to the solution (divide by 
+\begin_inset Formula $\sqrt{A^{2}+B^{2}}$
+\end_inset
+
+ and identify 
+\begin_inset Formula $\frac{A}{\sqrt{A^{2}+B^{2}}}$
+\end_inset
+
+ to be cos f ).
+ Hence predict v.
+ Convert the above to a function that can be called via
+\begin_inset Formula 
+\[
+nu=calcnu(x,x_{0},\text{’}r\text{’},eps,model)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+where eps is the amount of noise added and model is whether to run (1) or
+ (2) above.
+ See the effect of noise on the fit.
+ Plot the fit for eps of 0.01.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+def fun(x): #function computes matrix [cosx,sinx]		
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ans=np.zeros((len(x),2))
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ans[:,0]=sp.cos(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ans[:,1]=sp.sin(x)
+\end_layout
+
+\begin_layout Plain Layout
+
+	return Ans
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#model a manipulated to get the further models
+\end_layout
+
+\begin_layout Plain Layout
+
+def calcnu(x,x0,color,eps,model):
+\end_layout
+
+\begin_layout Plain Layout
+
+	A=np.zeros((41,2))
+\end_layout
+
+\begin_layout Plain Layout
+
+	v=[]
+\end_layout
+
+\begin_layout Plain Layout
+
+	for i in x0 :
+\end_layout
+
+\begin_layout Plain Layout
+
+		y=x[np.where(x>=i)]	#only required x
+\end_layout
+
+\begin_layout Plain Layout
+
+		A=fun(y)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		if model=='b' :
+\end_layout
+
+\begin_layout Plain Layout
+
+			A[:,0]=A[:,0]/((y)**(1/2.0))
+\end_layout
+
+\begin_layout Plain Layout
+
+			A[:,1]=A[:,1]/((y)**(1/2.0))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		J=jv(1.0,y)	#in-build bessel function 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		if model=='b' :
+\end_layout
+
+\begin_layout Plain Layout
+
+			noise=eps*randn(len(J))
+\end_layout
+
+\begin_layout Plain Layout
+
+			J+=noise	#adding noise to J
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		B=lstsq(A,J)[0]	#computes coefficients
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		C=B[0]/((B[0]*B[0] + B[1]*B[1])**(1/2.0))
+\end_layout
+
+\begin_layout Plain Layout
+
+		C=sp.arccos(C)
+\end_layout
+
+\begin_layout Plain Layout
+
+		v.append((C-m.pi/4)*2/m.pi)	#computes v
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	l, =mp.plot(x0,v,color)	
+\end_layout
+
+\begin_layout Plain Layout
+
+	line.append(l)	#for displaying all plots
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+3.Try varying the number of measurements (keeping the range of x the same).
+ What happens?
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+for i in range(8): #for varying the measurements
+\end_layout
+
+\begin_layout Plain Layout
+
+	number=randint(10,60)
+\end_layout
+
+\begin_layout Plain Layout
+
+	x0=np.linspace(0.1,18,num=number)
+\end_layout
+
+\begin_layout Plain Layout
+
+	line=[]
+\end_layout
+
+\begin_layout Plain Layout
+
+	calcnu(x,x0,'go',0,'a')
+\end_layout
+
+\begin_layout Plain Layout
+
+	calcnu(x,x0,'bo',0,'b')
+\end_layout
+
+\begin_layout Plain Layout
+
+	calcnu(x,x0,'ro',0.01,'b')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	mp.legend([line[0],line[1],line[2]],
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		[r'$
+\backslash
+epsilon =0$,model (b)',r'$
+\backslash
+epsilon =0$,model (c)',
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		r'$
+\backslash
+epsilon=10^{-2}$,model (c)'], loc='lower right')
+\end_layout
+
+\begin_layout Plain Layout
+
+	mp.xlabel('x0')
+\end_layout
+
+\begin_layout Plain Layout
+
+	mp.ylabel('Predicted v')
+\end_layout
+
+\begin_layout Plain Layout
+
+	mp.title('Plot of v')
+\end_layout
+
+\begin_layout Plain Layout
+
+	mp.savefig('Fig{}.png'.format(i+1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	mp.show()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When 8 random number of measurements, the result is as shown below :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig1.png
+	lyxscale 70
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig3.png
+	lyxscale 70
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig2.png
+	lyxscale 70
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig4.png
+	lyxscale 70
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig5.png
+	lyxscale 70
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig6.png
+	lyxscale 70
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig7.png
+	lyxscale 70
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig8.png
+	lyxscale 70
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+4.
+ Discuss the effect of model accuracy, number of measurements, and the effect
+ of noise on the quality of the fit.
+\end_layout
+
+\begin_layout Standard
+As we can infer from the plots, model (c) has more accuracy compared to
+ that of model (b).
+ Noise is an inherant aspect of any real life systems which cannot be avoided
+ fully.
+ And hence, usage of model (c) with noise will be much more advisable than
+ model (b) with noise.
+ Increasing the number of measurements by keeping the range of x constant
+ doesn't seem to be affecting the plots much other than reducing the number
+ of points plotted on the graph.
+ But yes, it does give a more clearer picture of the approach towards v=1
+ when there are more points plotted.
+ Noise of even 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$
+\backslash
+epsilon$
+\end_layout
+
+\end_inset
+
+ = 0.01 has a lot of effect on the accuracy of the graph.
+ We can see that we get values of v above 1 in the plots.
+ This shows us how noise affects the quality of the fit.
+ The divergence from the actual value seems to increse as x increases meaning
+ larger deviation for larger x though this cannot be generalised.
+ The deviations seems to increase as the calculated value approaches v=1.
+\end_layout
+
+\end_body
+\end_document

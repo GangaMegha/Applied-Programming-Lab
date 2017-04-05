@@ -1,0 +1,1255 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Assignment 5 : Laplace Equation
+\end_layout
+
+\begin_layout Author
+Ganga Meghanath
+\end_layout
+
+\begin_layout Date
+EE15B025
+\end_layout
+
+\begin_layout Section*
+Introduction
+\end_layout
+
+\begin_layout Standard
+The assignment is based on currents in a resistor.
+ The currents depend on the shape of the resistor and we want to see if
+ 
+\begin_inset Formula $R=\rho\frac{L}{A}$
+\end_inset
+
+ works or not.
+\end_layout
+
+\begin_layout Standard
+A voltage 
+\begin_inset Formula $V_{AB}$
+\end_inset
+
+ = 1V is applied across the terminals of a resistor.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Resistor.png
+	scale 30
+
+\end_inset
+
+As a result, current flows.
+ The current at each point can be described by a “current density” 
+\begin_inset Formula $\overrightarrow{j}$
+\end_inset
+
+ .
+ This current density is related to the local Electric Field by the conductivity
+: 
+\begin_inset Formula 
+\[
+\overrightarrow{j}=\sigma\overrightarrow{E}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now the Electric field is the gradient of the potential,
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $\overrightarrow{E}=-\nabla\phi$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and continuity of charge yields
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $\nabla.\overrightarrow{j}=-\frac{\partial\rho}{\partial t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Combining these equations we obtain
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $\nabla.(-\sigma\nabla\phi)=-\frac{\partial\rho}{\partial t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Assuming that our resistor contains a material of constant conductivity,
+ the equation becomes
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $\nabla^{2}\phi=\frac{1}{\sigma}\frac{\partial\rho}{\partial t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For DC currents, the right side is zero, and we obtain,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\nabla^{2}\phi=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Code
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+from pylab import *
+\end_layout
+
+\begin_layout Plain Layout
+
+import numpy as np
+\end_layout
+
+\begin_layout Plain Layout
+
+import mpl_toolkits.mplot3d.axes3d as p3
+\end_layout
+
+\begin_layout Plain Layout
+
+import sys
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def update(phi):	#Updating the potential
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi[1:-1,1:-1]=0.25*(phi[:-2,1:-1]+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		phi[1:-1,0:-2]+phi[2:,1:-1]+phi[1:-1,2:])
+\end_layout
+
+\begin_layout Plain Layout
+
+	return phi
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def assert_boundaries(phi,Nbegin,Nend):	#boundary conditions
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi[1:-1,0]=phi[1:-1,1]
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi[1:-1,-1]=phi[1:-1,-2]
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi[0,1:Nbegin],phi[0,Nend+1:-1]=phi[1,1:Nbegin],phi[1,Nend+1:-1]
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi[-1,1:Nbegin],phi[-1,Nend+1:-1]=phi[-2,1:Nbegin],phi[-2,Nend+1:-1]
+\end_layout
+
+\begin_layout Plain Layout
+
+	return phi
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def fun(Nx=25,Ny=25,Nbegin=8,Nend=17,Niter=1500) :
+\end_layout
+
+\begin_layout Plain Layout
+
+	error=zeros(Niter)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi=zeros((Nx,Ny))		#create phi matrix
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi[0,Nbegin:Nend+1]=1 	#top potential 1
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi[-1,Nbegin:Nend+1]=0	#lower potential 0
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	for k in range(Niter):
+\end_layout
+
+\begin_layout Plain Layout
+
+		oldphi=phi.copy()
+\end_layout
+
+\begin_layout Plain Layout
+
+		phi=update(phi)
+\end_layout
+
+\begin_layout Plain Layout
+
+		phi=assert_boundaries(phi,Nbegin,Nend)
+\end_layout
+
+\begin_layout Plain Layout
+
+		error[k]=(abs(phi-oldphi)).max()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	logy=log(error)	
+\end_layout
+
+\begin_layout Plain Layout
+
+	x=np.ones((len(error),2))
+\end_layout
+
+\begin_layout Plain Layout
+
+	x[:,1]=range(Niter)
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	ans1=lstsq(x,logy)[0] #from index 0
+\end_layout
+
+\begin_layout Plain Layout
+
+	ans2=lstsq(x[500:,:],logy[500:])[0] #from index 500
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	A1,B1=exp(ans1[0]),ans1[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+	A2,B2=exp(ans2[0]),ans2[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	q1 = B1*np.arange(Niter)
+\end_layout
+
+\begin_layout Plain Layout
+
+	q2=B2*np.arange(Niter)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	print "A and B values for error : "
+\end_layout
+
+\begin_layout Plain Layout
+
+	print "Case 1 : {} and {}".format(A1,B1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	print "Case 2 : {} and {}".format(A2,B2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	title('Evaluation of Error with iteration')
+\end_layout
+
+\begin_layout Plain Layout
+
+	xlabel('Iteration')
+\end_layout
+
+\begin_layout Plain Layout
+
+	ylabel('log(Error)')
+\end_layout
+
+\begin_layout Plain Layout
+
+	semilogy(range(Niter)[::50],error[::50],'ro',label='error')
+\end_layout
+
+\begin_layout Plain Layout
+
+	semilogy(range(Niter)[::50],A1*np.exp(q1)[::50],'r',label='fit1')
+\end_layout
+
+\begin_layout Plain Layout
+
+	semilogy(range(Niter)[500::50],A2*np.exp(q2)[500::50],'g',label='fit2')
+\end_layout
+
+\begin_layout Plain Layout
+
+	legend()
+\end_layout
+
+\begin_layout Plain Layout
+
+	show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig1=figure(4) 
+\end_layout
+
+\begin_layout Plain Layout
+
+	ax=p3.Axes3D(fig1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	x=arange(1,Nx+1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	y=arange(1,Ny+1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	X,Y=meshgrid(x,y)
+\end_layout
+
+\begin_layout Plain Layout
+
+	title('The 3D Surface plot of the potential')
+\end_layout
+
+\begin_layout Plain Layout
+
+	surf=ax.plot_surface(Y,X,phi,rstride=1,cstride=1,cmap=cm.jet,linewidth=0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	title('Contour plot of potential')
+\end_layout
+
+\begin_layout Plain Layout
+
+	contour(Y,X,phi)
+\end_layout
+
+\begin_layout Plain Layout
+
+	show()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	Jx=np.zeros(phi.shape) 	#current densities
+\end_layout
+
+\begin_layout Plain Layout
+
+	Jy=Jx.copy()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	Jx[1:-1,1:-1]=(phi[1:-1,:-2]-phi[1:-1,2:])/2
+\end_layout
+
+\begin_layout Plain Layout
+
+	Jy[1:-1,1:-1]=(phi[:-2,1:-1]-phi[2:,1:-1])/2
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	title('Vector plot of the current flow')
+\end_layout
+
+\begin_layout Plain Layout
+
+	quiver(y,x,Jy.transpose(),Jx.transpose())
+\end_layout
+
+\begin_layout Plain Layout
+
+	show()
+\end_layout
+
+\begin_layout Plain Layout
+
+	print "Electrode between indices : {} and {}".format(Nbegin,Nend)
+\end_layout
+
+\begin_layout Plain Layout
+
+	print "The Iavg value : {}".format((sum(Jy[:,1]) + sum(Jy[:,-2]))/2)  #Iavg
+\end_layout
+
+\begin_layout Plain Layout
+
+	print "The Idiff value : {}".format(abs(sum(Jy[:,1]) - sum(Jy[:,-2])))	#Idiff
+\end_layout
+
+\begin_layout Plain Layout
+
+	print "Resistance : {}".format(1/((sum(Jy[:,1]) + sum(Jy[:,-2]))/2)) #V/Iavg
+\end_layout
+
+\begin_layout Plain Layout
+
+	return phi,Nx,Ny
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#Order : Nx,Ny,Nbegin,Nend,Niter
+\end_layout
+
+\begin_layout Plain Layout
+
+fun()
+\end_layout
+
+\begin_layout Plain Layout
+
+fun(int(sys.argv[1]),int(sys.argv[2]),int(sys.argv[3]),
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	int(sys.argv[4]),int(sys.argv[5]))	#for fist case with small electrode
+\end_layout
+
+\begin_layout Plain Layout
+
+phi,Nx,Ny=fun(int(sys.argv[1]),int(sys.argv[2]),0,
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	int(sys.argv[2])-1,int(sys.argv[5]))	#long electrode
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+array=np.zeros(phi.shape)
+\end_layout
+
+\begin_layout Plain Layout
+
+arr=np.linspace(Ny,Ny,Ny)-np.arange(0,Ny)
+\end_layout
+
+\begin_layout Plain Layout
+
+array=arr
+\end_layout
+
+\begin_layout Plain Layout
+
+epsilon2=sum((phi-array/Ny)**2)/(Nx*Ny)
+\end_layout
+
+\begin_layout Plain Layout
+
+print 'epsilon2 = {}'.format(epsilon2)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Output
+\end_layout
+
+\begin_layout Subsubsection*
+For default arguments :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+A and B values for error : 
+\end_layout
+
+\begin_layout Plain Layout
+
+Case 1 : 0.00235717964439 and -0.00276031665063
+\end_layout
+
+\begin_layout Plain Layout
+
+Case 2 : 0.00141179338348 and -0.00226201175839
+\end_layout
+
+\begin_layout Plain Layout
+
+Electrode between indices : 8 and 17
+\end_layout
+
+\begin_layout Plain Layout
+
+The Iavg value : 0.432965780098
+\end_layout
+
+\begin_layout Plain Layout
+
+The Idiff value : 0.0540234032603
+\end_layout
+
+\begin_layout Plain Layout
+
+Resistance : 2.30965135345
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For specified arguments : 
+\end_layout
+
+\begin_layout Standard
+python Assg5.py 30 30 10 19 2000
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+A and B values for error : 
+\end_layout
+
+\begin_layout Plain Layout
+
+Case 1 : 0.00149901445721 and -0.00180659748438
+\end_layout
+
+\begin_layout Plain Layout
+
+Case 2 : 0.000839141749588 and -0.00138543227524
+\end_layout
+
+\begin_layout Plain Layout
+
+Electrode between indices : 10 and 19
+\end_layout
+
+\begin_layout Plain Layout
+
+The Iavg value : 0.388145592997
+\end_layout
+
+\begin_layout Plain Layout
+
+The Idiff value : 1.66533453694e-16
+\end_layout
+
+\begin_layout Plain Layout
+
+Resistance : 2.57635283781
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Full length electrode :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+A and B values for error : 
+\end_layout
+
+\begin_layout Plain Layout
+
+Case 1 : 0.00261456004012 and -0.00318576206597
+\end_layout
+
+\begin_layout Plain Layout
+
+Case 2 : 0.00186331495463 and -0.00293599566766
+\end_layout
+
+\begin_layout Plain Layout
+
+Electrode between indices : 0 and 29
+\end_layout
+
+\begin_layout Plain Layout
+
+The Iavg value : 0.965517241375
+\end_layout
+
+\begin_layout Plain Layout
+
+The Idiff value : 0.0
+\end_layout
+
+\begin_layout Plain Layout
+
+Resistance : 1.03571428572
+\end_layout
+
+\begin_layout Plain Layout
+
+epsilon2 = 0.172637302543
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Graphs :
+\end_layout
+
+\begin_layout Subsubsection*
+For default arguments :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig1.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Fig2.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig3.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Fig4.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For specified arguments : 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig5.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Fig6.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig7.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Fig8\.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Full length electrode :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig9.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Fig10.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename Fig11.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Fig12.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Inference
+\end_layout
+
+\begin_layout Standard
+The variation of epsilon with increase in Nx and Ny can be seen below :
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=35 , epsilon2 = 0.171900070878
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 1.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename a.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=55 , epsilon2 = 0.177761140725
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 2.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename b.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=75 , epsilon2 = 0.201395730006
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 3.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename c.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=95 , epsilon2 = 0.22632677789
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 4.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename d.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=115 , epsilon2 = 0.244922581726
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 5.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename e.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=135 , epsilon2 = 0.258230621492
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 6.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename f.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=155 , epsilon2 = 0.268077062159
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 7.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename g.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=175 , epsilon2 = 0.275642578605
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 8.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename h.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=195 , epsilon2 = 0.281636426928
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 9.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename i.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+For Nx=Ny=215 , epsilon2 = 0.28650217484
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename 10.png
+	scale 30
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename j.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As we can see from the above figures, the epsilon(error) increases with
+ Nx and Ny.
+ This explains the change in behaviour of the figures as Nx and Ny increases.
+ ie, the figures become more and more erroneous.
+ This shows the ineffectiveness in using the above method for practical
+ applications.
+\end_layout
+
+\begin_layout Standard
+The code used for computing the above errors is as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Nx=35
+\end_layout
+
+\begin_layout Plain Layout
+
+Ny=35
+\end_layout
+
+\begin_layout Plain Layout
+
+for i in range(10):
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi,Nx,Ny=fun(Nx,Ny,0,Ny-1,2000)
+\end_layout
+
+\begin_layout Plain Layout
+
+	array=np.zeros(phi.shape)
+\end_layout
+
+\begin_layout Plain Layout
+
+	arr=np.linspace(Ny,Ny,Ny)-np.arange(0,Ny)
+\end_layout
+
+\begin_layout Plain Layout
+
+	array=arr
+\end_layout
+
+\begin_layout Plain Layout
+
+	epsilon2=sum((phi-array/Ny)**2)/(Nx*Ny)
+\end_layout
+
+\begin_layout Plain Layout
+
+	print 'For Nx=Ny={} , epsilon2 = {}'.format(Nx,epsilon2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	Nx+=20
+\end_layout
+
+\begin_layout Plain Layout
+
+	Ny=Nx
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Only requires figures were displayed and rest of the code commented during
+ the process.
+\end_layout
+
+\end_body
+\end_document
